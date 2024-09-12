@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Avatar from "boring-avatars";
 import {
   FaRegCircleXmark,
@@ -22,6 +22,78 @@ const Gallery = ({ users }: GalleryProps) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [sortBy, setSortBy] = useState<undefined | string>(undefined);
+  const [sortOrder, setSortOrder] = useState<undefined | string>(undefined);
+
+  const handleSortChange = (sortByValue: undefined | string, sortOrderValue: undefined | string) => {
+    setSortBy(sortByValue);
+    setSortOrder(sortOrderValue);
+  }
+
+  /* const sortedUsers = useMemo(() => {
+    return [...usersList].sort(function (a, b) {
+      if (sortBy === 'name') {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        }
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      } else if (sortBy === 'company') {
+        if (a.company.name.toLowerCase() < b.company.name.toLowerCase()) {
+          return -1;
+        }
+        if (a.company.name.toLowerCase() > b.company.name.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      } else if (sortBy === 'email') {
+        if (a.email.toLowerCase() < b.email.toLowerCase()) {
+          return -1;
+        }
+        if (a.email.toLowerCase() > b.email.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      }
+  
+      return 0;
+    });
+  }, [usersList, sortBy]); */
+
+  const sortedUsers = useMemo(() => {
+    return [...usersList].sort((a, b) => {
+      const getValue = (obj: any, key: string) => {
+        switch (key) {
+          case "name":
+            return obj.name.toLowerCase();
+          case "company":
+            return obj.company.name.toLowerCase();
+          case "email":
+            return obj.email.toLowerCase();
+          default:
+            return "";
+        }
+      };
+  
+      if (sortBy) {
+        const valueA = getValue(a, sortBy);
+        const valueB = getValue(b, sortBy);
+  
+        if (sortOrder === 'ascending') {
+          if (valueA < valueB) return -1;
+          if (valueA > valueB) return 1;
+        } else if (sortOrder === 'descending') {
+          if (valueA > valueB) return -1;
+          if (valueA < valueB) return 1;
+        }
+      }
+  
+      return 0;
+    });
+  }, [usersList, sortBy, sortOrder]);
+
   const handleModalOpen = (id: number) => {
     const user = usersList.find((item) => item.id === id) || null;
 
@@ -36,14 +108,21 @@ const Gallery = ({ users }: GalleryProps) => {
     setIsModalOpen(false);
   };
 
+  const checker = sortBy && sortOrder && sortedUsers;
+  const listToMap = checker ? sortedUsers : usersList;
+
+  console.log('list to map', listToMap);
+  console.log(sortedUsers);
+  console.log(sortBy, sortOrder);
+
   return (
     <div className="user-gallery">
       <div className="heading">
         <h1 className="title">Users</h1>
-        <Controls />
+        <Controls onSortChange={handleSortChange}/>
       </div>
       <div className="items">
-        {usersList.map((user, index) => (
+        {listToMap.map((user, index) => (
           <div
             className="item user-card"
             key={index}

@@ -10,6 +10,11 @@
     @media screen and (max-width: 480px) {
       grid-template-columns: 1fr;
     }
+
+    @media (min-width: 701px) and (max-width: 1120px) {
+      grid-template-columns: repeat(2, 50%);
+    }
+
   }
 
   > .heading + .items {

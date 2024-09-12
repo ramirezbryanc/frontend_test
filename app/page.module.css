@@ -129,6 +129,11 @@
 
 /* Mobile */
 @media (max-width: 700px) {
+  .main {
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+
   .content {
     padding: 4rem;
   }
@@ -208,6 +213,10 @@
 @media (min-width: 701px) and (max-width: 1120px) {
   .grid {
     grid-template-columns: repeat(2, 50%);
+  }
+
+  .main { 
+    padding: 3rem;
   }
 }
 
